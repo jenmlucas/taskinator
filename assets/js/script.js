@@ -46,12 +46,14 @@ var completeEditTask = function (taskName, taskType, taskId) {
   taskSelected.querySelector("span.task-type").textContent = taskType;
 
   // loop through tasks array and task object with new content
-for (var i = 0; i < tasks.length; i++) {
-  if (tasks[i].id === parseInt(taskId)) {
-    tasks[i].name = taskName;
-    tasks[i].type = taskType;
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].name = taskName;
+      tasks[i].type = taskType;
+    }
   }
-}
+
+  saveTasks();
 
   alert("Task Updated!");
 
@@ -77,7 +79,7 @@ var createTaskEl = function (taskDataObj) {
   taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
   listItemEl.appendChild(taskInfoEl);
 
-  taskDataObj.id= taskIdCounter;
+  taskDataObj.id = taskIdCounter;
   tasks.push(taskDataObj);
 
   var taskActionsEl = createTaskActions(taskIdCounter);
@@ -88,6 +90,8 @@ var createTaskEl = function (taskDataObj) {
 
   //increase task counter for next unique id
   taskIdCounter++;
+
+  saveTasks();
 };
 
 var createTaskActions = function (taskId) {
@@ -167,7 +171,7 @@ var editTask = function (taskId) {
 var deleteTask = function (taskId) {
   var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
   taskSelected.remove();
-// create new array to hold updated list of tasks
+  // create new array to hold updated list of tasks
   var updatedTaskArr = [];
 
   for (var i = 0; i < tasks.length; i++) {
@@ -178,6 +182,8 @@ var deleteTask = function (taskId) {
   }
   // reassign tasks array to be the same as updatedTaskArr
   tasks = updatedTaskArr;
+
+  saveTasks();
 }
 
 var taskStatusChangeHandler = function (event) {
@@ -205,8 +211,13 @@ var taskStatusChangeHandler = function (event) {
       tasks[i].status = statusValue;
     }
   }
+
+  saveTasks();
 };
 
+var saveTasks = function () {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 pageContentEl.addEventListener("click", taskButtonHandler);
 formEl.addEventListener("submit", taskFormHandler);
